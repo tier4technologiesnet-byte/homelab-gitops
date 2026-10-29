@@ -16,5 +16,8 @@ helm:
     replicaCount: 2
     service:
       type: LoadBalancer
+      # The firewall only lets the home LAN reach this cluster on standard
+      # ports, so serve on 80 instead of opening 9898.
+      externalPort: 80
     serviceMonitor:
       enabled: true

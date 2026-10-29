@@ -32,7 +32,7 @@ resource applied by hand; it tells Fleet to watch this repo.
 | Folder | What it deploys | Notes |
 | --- | --- | --- |
 | `apps/monitoring` | Prometheus, Grafana, Alertmanager (kube-prometheus-stack 92.7.0) | 10 days of metrics on a 20 GiB volume; Grafana on a MetalLB address |
-| `apps/podinfo` | podinfo 6.15.0, a small demo web app | 2 replicas; Prometheus scrapes it through its ServiceMonitor |
+| `apps/podinfo` | podinfo 6.15.0, a small demo web app | 2 replicas on port 80; Prometheus scrapes it through its ServiceMonitor |
 
 ## Design choices
 

@@ -1,0 +1,13 @@
+# Applied once by hand. After that, Fleet watches this repo and deploys
+# every bundle under apps/ to the local cluster.
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: homelab-gitops
+  namespace: fleet-local
+spec:
+  repo: https://github.com/tier4technologiesnet-byte/homelab-gitops
+  branch: main
+  paths:
+    - apps
+  pollingInterval: 1m

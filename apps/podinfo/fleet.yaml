@@ -1,0 +1,20 @@
+# podinfo, a small demo web app, scraped by Prometheus through its ServiceMonitor.
+defaultNamespace: podinfo
+
+# The ServiceMonitor CRD comes from the monitoring bundle, so deploy that first.
+dependsOn:
+  - selector:
+      matchLabels:
+        app: monitoring
+
+helm:
+  releaseName: podinfo
+  repo: https://stefanprodan.github.io/podinfo
+  chart: podinfo
+  version: 6.15.0
+  values:
+    replicaCount: 2
+    service:
+      type: LoadBalancer
+    serviceMonitor:
+      enabled: true

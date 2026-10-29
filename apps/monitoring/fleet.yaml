@@ -1,0 +1,13 @@
+# Prometheus, Grafana and Alertmanager via the kube-prometheus-stack chart.
+defaultNamespace: monitoring
+
+labels:
+  app: monitoring
+
+helm:
+  releaseName: kube-prometheus-stack
+  repo: https://prometheus-community.github.io/helm-charts
+  chart: kube-prometheus-stack
+  version: 92.7.0
+  valuesFiles:
+    - values.yaml

@@ -86,7 +86,7 @@ data:
         log "$file is already fully downloaded; verifying"
       else
         log "downloading $file ($size bytes, $have already here)"
-        if ! curl -fL --retry 5 --retry-delay 30 --speed-limit 1000 --speed-time 300 \
+        if ! curl -fL --no-progress-meter --retry 5 --retry-delay 30 --speed-limit 1000 --speed-time 300 \
             -C - -o "$file.part" "$BASE/$dir/$file"; then
           log "download of $file stopped; it resumes next round"
           return 1

@@ -1,0 +1,8 @@
+# Lifeboat: what the house still has when the internet is gone.
+# An offline reference library (Kiwix) on the cluster's USB disks, and a start page
+# that links every offline service on the home network. Plain manifests, no chart.
+# The plan, the phases and the offline gotchas are in docs/lifeboat.md.
+defaultNamespace: lifeboat
+
+labels:
+  app: lifeboat

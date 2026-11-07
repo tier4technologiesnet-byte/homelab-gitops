@@ -33,6 +33,7 @@ resource applied by hand; it tells Fleet to watch this repo.
 | --- | --- | --- |
 | `apps/monitoring` | Prometheus, Grafana, Alertmanager (kube-prometheus-stack 92.7.0) | 10 days of metrics on a 20 GiB volume; Grafana on a MetalLB address |
 | `apps/podinfo` | podinfo 6.15.0, a small demo web app | 2 replicas on port 80; Prometheus scrapes it through its ServiceMonitor |
+| `apps/lifeboat` | Offline library (Kiwix 3.8.2 + a downloader) and a start page | Start page 10.27.28.202, library 10.27.28.203; books listed in `library.yaml`'s `zims.txt`, kept on the USB disks. Plan: [docs/lifeboat.md](docs/lifeboat.md) |
 
 ## Design choices
 

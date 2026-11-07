@@ -1,0 +1,178 @@
+# The start page: one address to remember when the internet is down,
+# http://10.27.28.202, linking every offline service on the home network with a
+# live up/down dot for each. Edit index.html below and commit to change it.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: start-page
+data:
+  index.html: |
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Lifeboat</title>
+    <style>
+      :root {
+        --bg: #f6f4ef; --card: #ffffff; --ink: #1d1d1f; --muted: #66666b; --line: #e2ddd3;
+        --accent: #2f6fde; --up: #2e9d57; --down: #c8463b; --wait: #b8b4aa;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121418; --card: #1b1e24; --ink: #ecebe7; --muted: #9a9ca3; --line: #2a2e36;
+          --accent: #6ea0f5; --up: #4cc27a; --down: #e46a5e; --wait: #555a63;
+          color-scheme: dark;
+        }
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--bg); color: var(--ink);
+             font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+      main { max-width: 880px; margin: 0 auto; padding: 28px 16px 48px; }
+      h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: -.01em; }
+      .lede { color: var(--muted); margin: 0 0 24px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+      a.card, div.card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+             padding: 16px; color: inherit; text-decoration: none; }
+      a.card:hover { border-color: var(--accent); }
+      .card h2 { font-size: 17px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+      .card p { margin: 0; color: var(--muted); font-size: 14px; }
+      .card .addr { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--wait); flex: none; }
+      .dot.up { background: var(--up); } .dot.down { background: var(--down); }
+      .soon { opacity: .7; }
+      section { margin-top: 32px; }
+      section h2 { font-size: 19px; margin: 0 0 8px; }
+      ul { margin: 0; padding-left: 1.2em; } li { margin: 4px 0; }
+      .note { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    </style>
+    </head>
+    <body>
+    <main>
+      <h1>Lifeboat</h1>
+      <p class="lede">Everything here runs inside the house and keeps working without the internet, as long as there is power.
+        Green means it answered just now.</p>
+
+      <div class="grid">
+        <a class="card" href="http://10.27.28.203/" data-check="http://10.27.28.203/">
+          <h2><span class="dot"></span>Offline library</h2>
+          <p>Medicine, survival and water guides, iFixit repairs, DIY, cooking, gardening, car and radio Q&amp;A, travel guides, Wikibooks.</p>
+          <div class="addr">10.27.28.203 · cluster</div>
+        </a>
+        <a class="card" href="http://10.27.27.10:8888/" data-check="http://10.27.27.10:8888/">
+          <h2><span class="dot"></span>Offline Wikipedia</h2>
+          <p>All of English Wikipedia, text only.</p>
+          <div class="addr">10.27.27.10:8888 · AI box</div>
+        </a>
+        <a class="card" href="http://10.27.27.10/" data-check="http://10.27.27.10/">
+          <h2><span class="dot"></span>Ask the offline AI</h2>
+          <p>Chat with the local models on the AI box. They can be wrong: check anything medical against the library.</p>
+          <div class="addr">10.27.27.10 · AI box</div>
+        </a>
+        <a class="card" href="http://10.27.27.12:8765/" data-check="http://10.27.27.12:8765/api/health">
+          <h2><span class="dot"></span>Read-aloud page</h2>
+          <p>Claude's replies, highlighted and read aloud. Needs the internet for Claude itself.</p>
+          <div class="addr">10.27.27.12:8765 · laptop</div>
+        </a>
+        <div class="card soon">
+          <h2><span class="dot"></span>Maps and directions</h2>
+          <p>Offline street maps and turn-by-turn routes for Oklahoma and its neighbors. Coming next.</p>
+          <div class="addr">phase 2</div>
+        </div>
+        <a class="card" href="http://10.27.28.200/" data-check="http://10.27.28.200/">
+          <h2><span class="dot"></span>Cluster health</h2>
+          <p>Grafana: is the cluster running, and how full are its disks.</p>
+          <div class="addr">10.27.28.200 · cluster</div>
+        </a>
+      </div>
+
+      <section>
+        <h2>If the internet is down</h2>
+        <div class="note">
+          <ul>
+            <li><b>Works:</b> every card above (except Claude itself), on any device on the home network or Wi-Fi.</li>
+            <li><b>Doesn't:</b> Claude, the phone app, cloud accounts, email. The cluster keeps running what it has but takes no new changes (they come from GitHub).</li>
+            <li><b>On your phone:</b> Organic Maps and Kiwix with downloaded files work with no network at all; GPS does not need the internet.</li>
+            <li><b>Power:</b> keep the firewall, switch and Wi-Fi on first, then the AI box, then the cluster. A phone and the paper binder outlast all of it.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    <script>
+      // A no-cors request settles if the service answered at all, and fails if
+      // nothing is listening, which is all an up/down dot needs.
+      document.querySelectorAll('[data-check]').forEach(card => {
+        const dot = card.querySelector('.dot')
+        const ctl = new AbortController()
+        const timer = setTimeout(() => ctl.abort(), 5000)
+        fetch(card.dataset.check, { mode: 'no-cors', cache: 'no-store', signal: ctl.signal })
+          .then(() => dot.classList.add('up'))
+          .catch(() => dot.classList.add('down'))
+          .finally(() => clearTimeout(timer))
+      })
+    </script>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: start-page
+  labels:
+    app.kubernetes.io/name: start-page
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: start-page
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: start-page
+    spec:
+      containers:
+        - name: httpd
+          image: busybox:1.37.0
+          imagePullPolicy: IfNotPresent
+          command: ["httpd", "-f", "-p", "8080", "-h", "/www"]
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          securityContext:
+            runAsUser: 65534
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+          volumeMounts:
+            - name: www
+              mountPath: /www
+      volumes:
+        - name: www
+          configMap:
+            name: start-page
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: start-page
+  annotations:
+    metallb.io/loadBalancerIPs: 10.27.28.202
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: start-page
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

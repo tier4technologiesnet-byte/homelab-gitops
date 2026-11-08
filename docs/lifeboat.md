@@ -18,7 +18,7 @@ Three tiers, built from the most durable up:
 | --- | --- | --- |
 | Start page | http://10.27.28.202 | cluster, `apps/lifeboat/start-page.yaml` |
 | Offline library | http://10.27.28.203 | cluster, `apps/lifeboat/library.yaml` (books listed in its `zims.txt`) |
-| Offline Wikipedia (text) | http://10.27.27.10:8888 | AI box, kiwix-serve container |
+| Offline Wikipedia (text) | http://10.27.27.10:8888 | AI box, kiwix-serve container (the same file is also in the cluster library) |
 | Offline AI chat | http://10.27.27.10 | AI box, Open WebUI + Ollama |
 | Read-aloud page | http://10.27.27.12:8765 | laptop, `C:\dev\read-aloud\follow` |
 
@@ -30,9 +30,13 @@ existing firewall rules; nothing new had to be opened for the cluster.
 **Phase 1: library and start page (started 2026-11-07)**
 - [x] `apps/lifeboat`: Kiwix on the USB disks, a downloader that keeps `zims.txt` current
       with sha256 checks, and the start page.
-- [ ] Watch the first download finish (~15 GB): `kubectl -n lifeboat logs deploy/kiwix -c fetch -f`.
-- [ ] Decide on the big books (Wikipedia with images 119 GB, Gutenberg 206 GB): check the
-      data costs of the way the cluster reaches the internet first.
+- [x] Watch the first download finish: done 2026-11-07, 19 books, 16.6 GB
+      (`kubectl -n lifeboat logs deploy/kiwix -c fetch -f`).
+- [x] Decide on the big books (2026-11-08). All of Wikipedia's text (no pictures, 53 GB) was
+      copied in from the AI box over the home network instead of downloaded. Project
+      Gutenberg (221 GB) downloads once. Wikipedia with pictures (127 GB) is skipped: it
+      mostly repeats the text, and the medical set already has its pictures. Big books are
+      marked `once` in `zims.txt`, so a new edition never re-downloads by itself.
 - [ ] Point the AI box's Open WebUI "Offline Wikipedia" tool at the cluster library too, so the
       model can quote the medical and repair books, not only Wikipedia.
 

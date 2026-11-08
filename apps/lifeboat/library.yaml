@@ -4,6 +4,8 @@
 # Add or remove a book by editing zims.txt below and committing. The downloader
 # re-reads the list every round (CHECK_HOURS), fetches what is missing or has a
 # newer edition, checks Kiwix's published sha256, and only then swaps it in.
+# Books marked "once" are fetched a single time and never updated: any edition on
+# hand is enough, so a new release of a big book doesn't download again by itself.
 # It never deletes a book because a line was removed, and never deletes the old
 # edition until the new one has downloaded and verified. With no internet it
 # changes nothing and the library keeps serving what it has.
@@ -23,8 +25,8 @@ kind: ConfigMap
 metadata:
   name: kiwix-library
 data:
-  # <folder on download.kiwix.org/zim/> <file name without the _YYYY-MM.zim date>
-  # Sizes as of 2026-11. The starter set is about 15 GB.
+  # <folder on download.kiwix.org/zim/> <file name without the _YYYY-MM.zim date> [once]
+  # Sizes as of 2026-11. The starter set is about 17 GB.
   zims.txt: |
     # Survival, medicine, water, food (Kiwix's own curated sets)
     other           zimgit-post-disaster_en
@@ -49,10 +51,16 @@ data:
     # Travel guides and how-to books (Wikibooks includes the Cookbook)
     wikivoyage      wikivoyage_en_all_maxi
     wikibooks       wikibooks_en_all_maxi
-    # Big ones: uncomment when wanted (check the disk and the data costs of the
-    # home connection first).
-    # wikipedia       wikipedia_en_all_maxi
-    # gutenberg       gutenberg_en_all
+    # Big ones, fetched once and never updated (each new edition would cost real
+    # money in data on the home connection). Check the disk before adding more.
+    # All of Wikipedia's text, no pictures (53 GB): copied in from the AI box on
+    # 2026-11-08 rather than downloaded; listed so it stays put.
+    wikipedia       wikipedia_en_all_nopic        once
+    # Project Gutenberg, ~70,000 public-domain books (221 GB)
+    gutenberg       gutenberg_en_all              once
+    # Wikipedia with pictures (127 GB): skipped, it mostly repeats the text above
+    # and the medical set already has its pictures.
+    # wikipedia       wikipedia_en_all_maxi       once
     # stack_exchange  electronics.stackexchange.com_en_all
     # libretexts      libretexts.org_en_med
 
@@ -64,6 +72,10 @@ data:
     RESERVE=$((10 * 1024 * 1024 * 1024))   # always leave 10 GiB free on the disk
     cd /data || exit 1
     log() { echo "$(date -u '+%Y-%m-%dT%H:%M:%SZ') $*"; }
+
+    # The editions of a book on hand. The date pattern keeps a short name from also
+    # matching a longer one (wikipedia_en_all would otherwise match wikipedia_en_all_maxi_*).
+    editions() { ls -1 "$1"_[0-9][0-9][0-9][0-9]-[0-9][0-9].zim 2>/dev/null; }
 
     # The newest file on the server for a folder and name, or nothing (offline, renamed).
     newest() {
@@ -105,8 +117,12 @@ data:
     }
 
     while true; do
-      grep -v '^[[:space:]]*\(#\|$\)' /config/zims.txt | while read -r dir name; do
+      grep -v '^[[:space:]]*\(#\|$\)' /config/zims.txt | while read -r dir name mode; do
         [ -n "${name:-}" ] || continue
+        # "once": any edition on hand is enough; don't even ask the server.
+        if [ "${mode:-}" = once ] && [ -n "$(editions "$name")" ]; then
+          continue
+        fi
         latest=$(newest "$dir" "$name")
         if [ -z "$latest" ]; then
           log "nothing found for $dir/$name (offline, or the name changed)"
@@ -114,8 +130,8 @@ data:
         fi
         [ -e "$latest" ] && continue
         if fetch_one "$dir" "$latest"; then
-          for old in "${name}"_*.zim; do
-            if [ -e "$old" ] && [ "$old" != "$latest" ]; then rm -f "$old"; log "replaced $old"; fi
+          for old in $(editions "$name"); do
+            if [ "$old" != "$latest" ]; then rm -f "$old"; log "replaced $old"; fi
           done
         fi
       done

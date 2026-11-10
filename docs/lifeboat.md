@@ -37,12 +37,16 @@ existing firewall rules; nothing new had to be opened for the cluster.
       Gutenberg (221 GB) downloads once. Wikipedia with pictures (127 GB) is skipped: it
       mostly repeats the text, and the medical set already has its pictures. Big books are
       marked `once` in `zims.txt`, so a new edition never re-downloads by itself.
-- [ ] Point the AI box's Open WebUI "Offline Wikipedia" tool at the cluster library too, so the
-      model can quote the medical and repair books, not only Wikipedia.
+- [x] AI chat reads the library (2026-11-10): an "Offline Library" tool in the AI box's
+      Open WebUI, attached to the three Home Assistant presets. It searches the cluster
+      library by shelf (medical, repair, survival, food, garden, radio, travel, books), reads
+      the best page and gives its link; medical questions prefer the medical encyclopedia.
+      "Offline Wikipedia" still reads the AI box's own copy, so it works with the cluster off.
 
 **Phase 2: maps and directions**
-- [ ] Phones first (no server needed): Organic Maps with Oklahoma, Kansas, Missouri, Arkansas
-      and Texas downloaded; Kiwix app with `zimgit-post-disaster` and `wikipedia_en_medicine_maxi`.
+- [x] Phones: Organic Maps with the home state and its neighbours downloaded (2026-11-10).
+- [ ] Phones: Kiwix app with `zimgit-post-disaster` and `wikipedia_en_medicine_maxi`, so first
+      aid and survival guides work with no power at home.
 - [ ] Cluster: Geofabrik extracts for the same states, a vector tile server and a routing engine
       (OSRM or Valhalla) with a map page on the start page.
 - [ ] Paper: a current road atlas, the state DOT highway map, and printed routes (two each,
